@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Pluto</title>
+    <% include Partials/Stylesheets %>
+  </head>
+  <body>
+    <div class="container">
+    <% if(Uploaded == 0){ %>
+      <form method="post" enctype="multipart/form-data" action="/upload">
+        <div class="row">
+          <div class="col-lg-4">
+            <label class="pull-right">Name</label>
+          </div>
+          <div class="col-lg-8">
+            <input type="text" name="name" id="name" required />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <label class="pull-right">Email</label>
+          </div>
+          <div class="col-lg-8">
+            <input type="email" name="email" id="email" required />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <label class="pull-right">Select Files</label>
+          </div>
+          <div class="col-lg-8">
+            <input type="file" name="file" id="file" multiple required />
+          </div>
+        </div>
+        <input type="text" value="0" name="plutoid" style="display:none" /> 
+        <div class="row">
+          <div class="col-lg-offset-4 col-lg-8">
+            <input type="submit" value="Upload" text="Upload" />
+          </div>
+        </div>
+      </form>
+    <% } %>
+    <% if(Uploaded == 1){ %> 
+      <div class="row">
+        <div class="col-lg-12">
+          <p class="success">Successfully Uploaded :)</p>
+        </div>
+      </div>
+    <% } %>
+    </div>
+    <% include Partials/Javascripts %>
+  </body>
+</html>

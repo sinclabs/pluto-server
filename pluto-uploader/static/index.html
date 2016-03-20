@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pluto Uploader</title>
+  <link href="app.css" rel="stylesheet">
+</head>
+<body>
+
+  <div class="userdetails" id "userdetails">
+    <input type ="textbox" class="name" value="First Name" onClick="this.value='';"/>
+    <input type ="textbox" class="surname" value="Last Name" onClick="this.value='';"/>
+    <input type ="textbox" class="email" value="Email" onClick="this.value='';"/>
+  </div>
+
+  <div class="dropzone" id="dropzone">
+    <span>Drop the files here...</span>
+  </div>
+
+  <input type="file" id="addFile" multiple>
+  <div class="upload" id "upload">
+    <input type ="button" value ="Upload!" onclick="return alert('Uploaded');"/>
+  </div>
+
+  <div class="footer">
+  Pluto
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
+
