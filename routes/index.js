@@ -1,29 +1,42 @@
-
 //Reqire everything here
 var express = require('express');
 var router = express.Router();
-var connection = require("../local_modules/mysql");
-
-//When home page is requested
-router.get('/', function(req, res, next) {
-
-	connection.query('SELECT * from testTable', function(err, rows, fields) {
-		if (!err){
-			rows.forEach(function(row){
-				console.log(row.id + " | " + row.testEntry)
-			});
-			//console.log('fields: ', fields);
-		}	
-		else{
-			console.log(err);
-		}
-	});
+var fs = require('fs');
+//var connection = require("../local_modules/mysql");
 
 
-	res.render('index', {Uploaded: "0"});
+router.get('/:id', function(req, res, next) {
+	var id = req.params.id;
+	// connection.query('SELECT * from testTable', function(err, rows, fields) {
+	// 	if (!err){
+	// 		rows.forEach(function(row){
+	// 			console.log(row.id + " | " + row.testEntry)
+	// 		});
+	// 		//console.log('fields: ', fields);
+	// 	}	
+	// 	else{
+	// 		console.log(err);
+	// 	}
+	// });
+	var obj = JSON.parse(fs.readFileSync( "./public/AppData/assignments.pluto", 'utf8'));
+	var assignment = search("AssignmentID", id, obj);
+	res.render('index', {Uploaded: "0", AssignmentID: id, AssignmentName: assignment[0].name});
 });
 
-
+function search(key, value, data){
+	var results = [];
+	var searchField = key;
+	var searchVal = value;
+	var obj = data;
+	
+	for (var i=0 ; i < obj.assignments.length ; i++)
+	{
+	    if (obj.assignments[i].AssignmentID == searchVal) {
+	        results.push(obj.assignments[i]);
+	    }
+	}
+	return results;
+}
 
 
 //Export the module

@@ -1,0 +1,13 @@
+{
+	"courses":[
+		{
+			"CourseID": "1",
+			"name": "HCID",
+			"ownerID": "1",
+			"CreatedBy": "1",
+			"CreatedDateTime": "2016-01-25 11:13:41",
+			"ModifiedBy": "NULL",
+			"ModifiedDateTime": "NULL"
+		}
+	]
+}

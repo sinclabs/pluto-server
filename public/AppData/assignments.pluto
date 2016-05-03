@@ -1,0 +1,13 @@
+{
+	"assignments":[
+		{
+			"AssignmentID": "0",
+			"name": "Assignment #1",
+			"CourseID": "1",
+			"CreatedBy": "1",
+			"CreatedDateTime": "2016-01-25 11:15:13",
+			"ModifiedBy": "NULL",
+			"ModifiedDateTime": "NULL"
+		}
+	]
+}
