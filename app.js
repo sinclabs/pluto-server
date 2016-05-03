@@ -14,6 +14,9 @@ var index = require('./routes/index');
 var dataGrab = require('./routes/dataGrab')
 
 var app = express();
+var WebSocketServer = require("ws").Server;
+var http = require("http");
+var port = process.env.PORT || 5000;
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -28,14 +31,30 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({secret: '@ss3mB1y'}));
 
+var server = http.createServer(app)
+server.listen(port)
+
+console.log("http server listening on %d", port)
+
+var wss = new WebSocketServer({server: server})
+console.log("websocket server created")
+
+wss.on("connection", function(ws) {
+  var id = setInterval(function() {
+    ws.send(JSON.stringify(new Date()), function() {  })
+  }, 1000);
+
+  console.log("websocket connection open")
+
+  ws.on("close", function() {
+    console.log("websocket connection close")
+    clearInterval(id)
+  });
+});
 
 app.use('/dataGrab', dataGrab);
 
 app.post('/upload', upload.array('file'), function(req, res, next) {
-  // console.log(req.body.name);
-  // console.log(req.body.email);
-  // console.log(req.body.plutoid);
-  // console.log(req.files);
   var fileNameList = "";
   for(var i=0;i<req.files.length;i++){
     fileNameList += req.files[i].originalname + "|";
@@ -44,48 +63,11 @@ app.post('/upload', upload.array('file'), function(req, res, next) {
     if(i != req.files.length-1)
       fileNameList += '*';
   }
-  // console.log(fileNameList);
   for(var i=0; i<req.files.length; i++){
     var buffer = fs.readFileSync(req.files[i].path);
     var newPath = __dirname + "/files/" +req.files[i].originalname;
     fs.writeFileSync(newPath, buffer);
   }
-  // var sqlQuery = 'insert into students (name, email, createdby, createdDateTime) values (\"'+req.body.name+'\", \"'+req.body.email+'\", '+req.body.plutoid+', NOW()); ';
-  // console.log(sqlQuery);
-  // connection.query(sqlQuery, function(err, rows, fields) {
-  //   if (!err){
-  //     console.log("1st Query Done");
-  //     sqlQuery = 'select StudentID from students order by StudentID DESC LIMIT 1;';
-  //     connection.query(sqlQuery, function(err, rows, fields) {
-  //       if(!err){
-  //         console.log("2nd Query Done");
-  //         rows.forEach(function(row){
-  //           sqlQuery = 'insert into submissions (fileList, AssignmentID, StudentID, CreatedBy, CreatedDateTime) values (\"'+fileNameList+'\",'+req.body.plutoid+','+row.StudentID+','+row.StudentID+', NOW());';
-  //           console.log(sqlQuery);
-  //           connection.query(sqlQuery, function(err, rows, fields) {
-  //             if (!err){
-  //               console.log("3rd Query Done");
-  //               console.log("Success");
-  //               res.render('index', {Uploaded: "1"});
-  //             } 
-  //             else{
-  //               console.log(err);
-  //               res.send('404');
-  //             }
-  //           });
-  //         });
-  //       }
-  //       else{
-  //         console.log(err);
-  //         res.send('404');
-  //       }
-  //     });
-  //   } 
-  //   else{
-  //     console.log(err);
-  //     res.send('404');
-  //   }
-  // });
   var obj = JSON.parse(fs.readFileSync( "./public/AppData/submissions.pluto", 'utf8'));
   var SubmissionID = 0;
   if(obj.submissions.length>0){
@@ -95,7 +77,6 @@ app.post('/upload', upload.array('file'), function(req, res, next) {
       }
     }  
   }
-  
   var stuobj = JSON.parse(fs.readFileSync( "./public/AppData/students.pluto", 'utf8'));
   var results = [];
   var StudentID = 0;
@@ -143,6 +124,7 @@ app.post('/upload', upload.array('file'), function(req, res, next) {
   console.log(uploadData);
   obj.submissions.push(uploadData);
   fs.writeFileSync("./public/AppData/submissions.pluto",JSON.stringify(obj));
+  ws.send(JSON.stringify("Uploaded"), function() {  })
   res.render('index', {Uploaded: "1"});
   
   function getDateTime() {

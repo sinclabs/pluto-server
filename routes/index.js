@@ -19,13 +19,12 @@ router.get('/:id', function(req, res, next) {
 	// 	}
 	// });
 	var obj = JSON.parse(fs.readFileSync( "./public/AppData/assignments.pluto", 'utf8'));
-	var assignment = search("AssignmentID", id, obj);
+	var assignment = search( id, obj);
 	res.render('index', {Uploaded: "0", AssignmentID: id, AssignmentName: assignment[0].name});
 });
 
-function search(key, value, data){
+function search(value, data){
 	var results = [];
-	var searchField = key;
 	var searchVal = value;
 	var obj = data;
 	
