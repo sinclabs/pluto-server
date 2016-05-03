@@ -36,19 +36,33 @@ server.listen(port)
 
 console.log("http server listening on %d", port)
 
-var wss = new WebSocketServer({server: server})
+var wss = new WebSocketServer({server: server}),
+clients=[];
 console.log("websocket server created")
 
 wss.on("connection", function(ws) {
-  var id = setInterval(function() {
-    ws.send(JSON.stringify(new Date()), function() {  })
-  }, 1000);
+  ws.send("Pluto/Handshake/ID");
+
+  ws.on('message', function(message){
+    var s = message.split(':');
+    if(s[0] === "Pluto/Handshake/ID"){
+      console.log('id: '+s[1]);
+      var conn = {
+        "id": s[1],
+        "connection": this
+      }
+      clients.push(conn);
+      ws.send("submissions$"+fs.readFileSync( "./public/AppData/submissions.pluto", 'utf8'));
+      ws.send("students$"+fs.readFileSync( "./public/AppData/students.pluto", 'utf8'));
+      ws.send("courses$"+fs.readFileSync( "./public/AppData/courses.pluto", 'utf8'));
+      ws.send("assignments$"+fs.readFileSync( "./public/AppData/assignments.pluto", 'utf8'));
+    }
+  });
 
   console.log("websocket connection open")
 
   ws.on("close", function() {
-    console.log("websocket connection close")
-    clearInterval(id)
+    console.log("websocket connection close");
   });
 });
 
@@ -124,7 +138,14 @@ app.post('/upload', upload.array('file'), function(req, res, next) {
   console.log(uploadData);
   obj.submissions.push(uploadData);
   fs.writeFileSync("./public/AppData/submissions.pluto",JSON.stringify(obj));
-  ws.send(JSON.stringify("Uploaded"), function() {  })
+  for(var i=0; i<clients.length; i++){
+    console.log('here')
+    var ws = clients[i].connection;
+    ws.send("submissions$"+fs.readFileSync( "./public/AppData/submissions.pluto", 'utf8'));
+    ws.send("students$"+fs.readFileSync( "./public/AppData/students.pluto", 'utf8'));
+    ws.send("courses$"+fs.readFileSync( "./public/AppData/courses.pluto", 'utf8'));
+    ws.send("assignments$"+fs.readFileSync( "./public/AppData/assignments.pluto", 'utf8'));
+  }
   res.render('index', {Uploaded: "1"});
   
   function getDateTime() {
