@@ -11,7 +11,7 @@ var multer  = require('multer');
 var upload = multer({ dest: '/files/' });
 
 var index = require('./routes/index');
-var dataGrab = require('./routes/dataGrab')
+// var dataGrab = require('./routes/dataGrab')
 
 var app = express();
 var WebSocketServer = require("ws").Server;
