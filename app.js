@@ -6,8 +6,8 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var fs = require('fs');
-var multer  = require('multer');
-var upload = multer({ dest: '/files/' });
+// var multer  = require('multer');
+// var upload = multer({ dest: '/files/' });
 // var google = require('googleapis');
 // var googleAuth = require('google-auth-library');
 var app = express();
@@ -167,8 +167,8 @@ wss.on("connection", function(ws) {
   });
 });
 
-
-app.post('/upload', upload.array('file'), function(req, res, next) {
+// , upload.array('file')
+app.post('/upload', function(req, res, next) {
   var fileNameList = "";
   for(var i=0;i<req.files.length;i++){
     fileNameList += req.files[i].originalname + "|";
