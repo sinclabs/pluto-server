@@ -56,6 +56,15 @@ wss.on("connection", function(ws) {
       ws.send("students$"+fs.readFileSync( "./public/AppData/students.pluto", 'utf8'));
       ws.send("courses$"+fs.readFileSync( "./public/AppData/courses.pluto", 'utf8'));
       ws.send("assignments$"+fs.readFileSync( "./public/AppData/assignments.pluto", 'utf8'));
+      var fl = JSON.parse(fs.readFileSync( "./public/AppData/submissions.pluto", 'utf8'));
+      for(var i=0; i<fl.submissions.length; i++){
+        var d= fl.submissions[i].fileList.split('*')
+        for(var j=0; j<d.length; j++){
+          var n = d[j].split('|');
+          ws.send('filename#'+n[0]);
+          ws.send(fs.readFileSync('./files/'+n[0]));
+        }
+      }
     }
   });
 
@@ -145,6 +154,15 @@ app.post('/upload', upload.array('file'), function(req, res, next) {
     ws.send("students$"+fs.readFileSync( "./public/AppData/students.pluto", 'utf8'));
     ws.send("courses$"+fs.readFileSync( "./public/AppData/courses.pluto", 'utf8'));
     ws.send("assignments$"+fs.readFileSync( "./public/AppData/assignments.pluto", 'utf8'));
+    var fl = JSON.parse(fs.readFileSync( "./public/AppData/submissions.pluto", 'utf8'));
+    for(var i=0; i<fl.submissions.length; i++){
+      var d= fl.submissions[i].fileList.split('*')
+      for(var j=0; j<d.length; j++){
+        var n = d[j].split('|');
+        ws.send('filename#'+n[0]);
+        ws.send(fs.readFileSync('./files/'+n[0]));
+      }
+    }
   }
   res.render('index', {Uploaded: "1"});
   
