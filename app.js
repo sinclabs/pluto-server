@@ -75,7 +75,6 @@ wss.on("connection", function(ws) {
   });
 });
 
-app.use('/dataGrab', dataGrab);
 
 app.post('/upload', upload.array('file'), function(req, res, next) {
   var fileNameList = "";
